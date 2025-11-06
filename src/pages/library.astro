@@ -1,0 +1,293 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+
+// Import songs dynamically
+const songs = [
+  {
+    id: 'lofi-beats',
+    title: 'Lofi Beats',
+    description: 'Chill lofi beats with atmospheric pads',
+    module: 'lofi-beats.js',
+    playFunction: 'playLofi'
+  },
+  {
+    id: 'ambient-dream',
+    title: 'Ambient Dream',
+    description: 'Ethereal ambient soundscape',
+    module: 'ambient-dream.js',
+    playFunction: 'playAmbient'
+  },
+  {
+    id: 'digital-pulse',
+    title: 'Digital Pulse',
+    description: 'Energetic electronic rhythm',
+    module: 'digital-pulse.js',
+    playFunction: 'playDigital'
+  }
+];
+---
+
+<BaseLayout title="Library - Music by Code">
+  <main class="min-h-screen px-4 py-12">
+    <div class="container mx-auto max-w-7xl">
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <a href="/" class="inline-flex items-center gap-2 text-neon-blue hover:text-neon-purple transition-colors mb-4">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          </svg>
+          Back to Home
+        </a>
+        <h1 class="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-neon-blue to-neon-pink bg-clip-text text-transparent">
+          Song Library
+        </h1>
+        <p class="text-gray-400 text-lg">
+          Click play to hear music created entirely with code
+        </p>
+      </div>
+
+      <!-- Song Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        {songs.map((song) => (
+          <div 
+            class="song-card bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10 hover:border-neon-purple/50 transition-all duration-300 hover:shadow-xl hover:shadow-neon-purple/20 hover:-translate-y-1"
+            data-song-id={song.id}
+          >
+            <!-- Song Icon -->
+            <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-neon-blue to-neon-purple rounded-xl flex items-center justify-center text-3xl">
+              🎵
+            </div>
+
+            <!-- Song Info -->
+            <h3 class="text-xl font-semibold mb-2 text-center">{song.title}</h3>
+            <p class="text-gray-400 text-sm text-center mb-4">{song.description}</p>
+
+            <!-- Waveform Visualization -->
+            <div class="waveform-container h-20 mb-4 bg-black/30 rounded-lg overflow-hidden relative">
+              <canvas 
+                class="waveform-canvas w-full h-full" 
+                data-song-id={song.id}
+              ></canvas>
+              <div class="absolute inset-0 flex items-center justify-center text-gray-600 text-sm idle-message">
+                Ready to play...
+              </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="flex gap-3">
+              <button 
+                class="play-btn flex-1 bg-gradient-to-r from-neon-blue to-neon-purple hover:from-neon-purple hover:to-neon-pink text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-neon-purple/50 flex items-center justify-center gap-2"
+                data-song-module={song.module}
+                data-song-function={song.playFunction}
+                data-song-id={song.id}
+              >
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
+                </svg>
+                Play
+              </button>
+              <button 
+                class="stop-btn bg-red-500/20 hover:bg-red-500/30 text-red-400 font-semibold py-3 px-6 rounded-lg transition-all duration-300 border border-red-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                data-song-id={song.id}
+                disabled
+              >
+                Stop
+              </button>
+            </div>
+
+            <!-- Status -->
+            <div class="status-message text-center text-sm mt-3 h-5">
+              <span class="text-gray-500"></span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Info Section -->
+      <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 max-w-3xl mx-auto">
+        <h2 class="text-2xl font-bold mb-4 text-center">About This Project</h2>
+        <p class="text-gray-400 text-center mb-4">
+          Each song is created using <span class="text-neon-blue font-semibold">Tone.js</span>, 
+          a Web Audio framework for creating interactive music in the browser. 
+          The visualizations are rendered in real-time using Canvas API.
+        </p>
+        <div class="flex justify-center gap-4 mt-6">
+          <a 
+            href="/studio"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300 text-sm"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+            </svg>
+            Try the Studio
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <Footer />
+  </main>
+</BaseLayout>
+
+<script>
+  // Store active songs and their stop functions
+  const activeSongs = new Map();
+  const analyserNodes = new Map();
+
+  // Function to draw waveform
+  function drawWaveform(canvas, analyser) {
+    const ctx = canvas.getContext('2d');
+    const bufferLength = analyser.fftSize;
+    const dataArray = new Float32Array(bufferLength);
+    
+    function draw() {
+      if (!analyserNodes.has(canvas.dataset.songId)) return;
+      
+      requestAnimationFrame(draw);
+      analyser.getValue(dataArray);
+      
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#00d4ff';
+      ctx.beginPath();
+      
+      const sliceWidth = canvas.width / bufferLength;
+      let x = 0;
+      
+      for (let i = 0; i < bufferLength; i++) {
+        const v = (dataArray[i] + 1) / 2;
+        const y = v * canvas.height;
+        
+        if (i === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+        
+        x += sliceWidth;
+      }
+      
+      ctx.stroke();
+    }
+    
+    draw();
+  }
+
+  // Setup canvas dimensions
+  document.querySelectorAll('.waveform-canvas').forEach(canvas => {
+    const container = canvas.parentElement;
+    canvas.width = container.offsetWidth * window.devicePixelRatio;
+    canvas.height = container.offsetHeight * window.devicePixelRatio;
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+  });
+
+  // Play button handlers
+  document.querySelectorAll('.play-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const button = e.currentTarget;
+      const songId = button.dataset.songId;
+      const module = button.dataset.songModule;
+      const functionName = button.dataset.songFunction;
+      const card = button.closest('.song-card');
+      const statusEl = card.querySelector('.status-message span');
+      const stopBtn = card.querySelector('.stop-btn');
+      const canvas = card.querySelector('.waveform-canvas');
+      const idleMessage = card.querySelector('.idle-message');
+      
+      // Stop if already playing
+      if (activeSongs.has(songId)) {
+        statusEl.textContent = 'Already playing...';
+        statusEl.className = 'text-yellow-400';
+        return;
+      }
+      
+      try {
+        button.disabled = true;
+        statusEl.textContent = 'Loading...';
+        statusEl.className = 'text-blue-400';
+        
+        // Dynamic import
+        const songModule = await import(`../songs/${module}`);
+        const playFunction = songModule[functionName];
+        
+        // Play the song
+        const stopFunction = await playFunction();
+        activeSongs.set(songId, stopFunction);
+        
+        // Setup analyser for waveform
+        const { Tone } = await import('tone');
+        const analyser = new Tone.Waveform(256);
+        Tone.Destination.connect(analyser);
+        analyserNodes.set(songId, analyser);
+        
+        // Hide idle message and start visualization
+        if (idleMessage) idleMessage.style.display = 'none';
+        drawWaveform(canvas, analyser);
+        
+        statusEl.textContent = 'Now playing ♫';
+        statusEl.className = 'text-green-400';
+        stopBtn.disabled = false;
+        
+      } catch (error) {
+        console.error('Error playing song:', error);
+        statusEl.textContent = 'Error playing song';
+        statusEl.className = 'text-red-400';
+      } finally {
+        button.disabled = false;
+      }
+    });
+  });
+
+  // Stop button handlers
+  document.querySelectorAll('.stop-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const button = e.currentTarget;
+      const songId = button.dataset.songId;
+      const card = button.closest('.song-card');
+      const statusEl = card.querySelector('.status-message span');
+      const canvas = card.querySelector('.waveform-canvas');
+      const idleMessage = card.querySelector('.idle-message');
+      
+      if (activeSongs.has(songId)) {
+        const stopFunction = activeSongs.get(songId);
+        if (stopFunction) stopFunction();
+        activeSongs.delete(songId);
+        
+        // Cleanup analyser
+        if (analyserNodes.has(songId)) {
+          analyserNodes.get(songId).dispose();
+          analyserNodes.delete(songId);
+        }
+        
+        // Clear canvas
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Show idle message
+        if (idleMessage) idleMessage.style.display = 'flex';
+        
+        statusEl.textContent = 'Stopped';
+        statusEl.className = 'text-gray-400';
+        button.disabled = true;
+        
+        setTimeout(() => {
+          statusEl.textContent = '';
+        }, 2000);
+      }
+    });
+  });
+</script>
+
+<style>
+  .song-card {
+    position: relative;
+  }
+
+  .idle-message {
+    pointer-events: none;
+  }
+</style>
