@@ -87,72 +87,31 @@ Then add the song to the library page in `src/pages/library.astro`.
 
 ## 🚀 Deployment
 
-### GitHub Pages
+### Vercel (Recommended)
 
-1. Update `astro.config.mjs` with your repository name:
+This project is optimized for [Vercel](https://vercel.com) deployment:
 
-```javascript
-export default defineConfig({
-  site: 'https://nwhator.github.io',
-  base: '/Music-by-Code',
-});
+**Option 1: Deploy via Vercel Dashboard**
+1. Push your code to GitHub
+2. Go to [vercel.com](https://vercel.com) and sign in
+3. Click "New Project" and import your `Music-by-Code` repository
+4. Vercel will auto-detect Astro and configure the build settings
+5. Click "Deploy" and your site will be live!
+
+**Option 2: Deploy via CLI**
+```bash
+# Install Vercel CLI globally
+npm i -g vercel
+
+# Deploy from your project directory
+vercel
+
+# Follow the prompts to link your project
 ```
 
-2. Create `.github/workflows/deploy.yml`:
+**Auto-Deployments:** Once connected, every push to your main branch will automatically trigger a new deployment on Vercel.
 
-```yaml
-name: Deploy to GitHub Pages
-
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Install dependencies
-        run: npm install
-      - name: Build
-        run: npm run build
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-```
-
-3. Enable GitHub Pages in repository settings (Settings → Pages → Source: GitHub Actions)
-
-### Vercel
-
-1. Install Vercel CLI: `npm i -g vercel`
-2. Deploy: `vercel`
-3. Follow the prompts
-
-Or connect your GitHub repository to [Vercel](https://vercel.com) for automatic deployments.
+**Live URL:** Your site will be available at `https://music-by-code.vercel.app` (or your custom domain)
 
 ## 📝 License
 
