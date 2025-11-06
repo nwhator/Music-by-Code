@@ -25,16 +25,16 @@ const songModules = {
     <div class="container mx-auto max-w-7xl">
       <!-- Header -->
       <div class="text-center mb-12">
-        <a href="/" class="inline-flex items-center gap-2 text-neon-blue hover:text-neon-purple transition-colors mb-4">
+        <a href="/" class="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors mb-6">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
           </svg>
           Back to Home
         </a>
-        <h1 class="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-neon-blue to-neon-pink bg-clip-text text-transparent">
+        <h1 class="text-5xl md:text-6xl font-bold mb-4 tracking-tight">
           Song Library
         </h1>
-        <p class="text-gray-400 text-lg">
+        <p class="text-gray-600 dark:text-gray-400 text-lg">
           Click play to hear music created entirely with code
         </p>
       </div>
@@ -43,25 +43,25 @@ const songModules = {
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
         {songs.map((song) => (
           <div 
-            class="song-card bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10 hover:border-neon-purple/50 transition-all duration-300 hover:shadow-xl hover:shadow-neon-purple/20 hover:-translate-y-1"
+            class="song-card bg-gray-50 dark:bg-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-all duration-300 hover:shadow-lg"
             data-song-id={song.id}
           >
             <!-- Song Icon -->
-            <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-neon-blue to-neon-purple rounded-xl flex items-center justify-center text-3xl">
-              ðŸŽµ
+            <div class="w-16 h-16 mx-auto mb-4 bg-gray-200 dark:bg-gray-800 rounded-xl flex items-center justify-center text-3xl">
+              í¾µ
             </div>
 
             <!-- Song Info -->
-            <h3 class="text-xl font-semibold mb-2 text-center">{song.title}</h3>
-            <p class="text-gray-400 text-sm text-center mb-4">{song.description}</p>
+            <h3 class="text-xl font-semibold mb-2 text-center text-gray-900 dark:text-gray-100">{song.title}</h3>
+            <p class="text-gray-600 dark:text-gray-400 text-sm text-center mb-4">{song.description}</p>
 
             <!-- Waveform Visualization -->
-            <div class="waveform-container h-20 mb-4 bg-black/30 rounded-lg overflow-hidden relative">
+            <div class="waveform-container h-20 mb-4 bg-gray-200 dark:bg-gray-800 rounded-lg overflow-hidden relative">
               <canvas 
                 class="waveform-canvas w-full h-full" 
                 data-song-id={song.id}
               ></canvas>
-              <div class="absolute inset-0 flex items-center justify-center text-gray-600 text-sm idle-message">
+              <div class="absolute inset-0 flex items-center justify-center text-gray-500 dark:text-gray-500 text-sm idle-message">
                 Ready to play...
               </div>
             </div>
@@ -69,7 +69,7 @@ const songModules = {
             <!-- Controls -->
             <div class="flex gap-3">
               <button 
-                class="play-btn flex-1 bg-gradient-to-r from-neon-blue to-neon-purple hover:from-neon-purple hover:to-neon-pink text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-neon-purple/50 flex items-center justify-center gap-2"
+                class="play-btn flex-1 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-200 font-medium py-3 px-6 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 data-song-module={song.module}
                 data-song-function={song.playFunction}
                 data-song-id={song.id}
@@ -77,10 +77,10 @@ const songModules = {
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
                 </svg>
-                Play
+                <span>Play</span>
               </button>
               <button 
-                class="stop-btn bg-red-500/20 hover:bg-red-500/30 text-red-400 font-semibold py-3 px-6 rounded-lg transition-all duration-300 border border-red-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="stop-btn bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 font-medium py-3 px-6 rounded-xl transition-all duration-300 border border-gray-300 dark:border-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 data-song-id={song.id}
                 disabled
               >
@@ -90,24 +90,24 @@ const songModules = {
 
             <!-- Status -->
             <div class="status-message text-center text-sm mt-3 h-5">
-              <span class="text-gray-500"></span>
+              <span class="text-gray-500 dark:text-gray-500"></span>
             </div>
           </div>
         ))}
       </div>
 
       <!-- Info Section -->
-      <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 max-w-3xl mx-auto">
+      <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-800 max-w-3xl mx-auto">
         <h2 class="text-2xl font-bold mb-4 text-center">About This Project</h2>
-        <p class="text-gray-400 text-center mb-4">
-          Each song is created using <span class="text-neon-blue font-semibold">Tone.js</span>, 
+        <p class="text-gray-600 dark:text-gray-400 text-center mb-4">
+          Each song is created using <span class="text-gray-900 dark:text-gray-100 font-semibold">Tone.js</span>, 
           a Web Audio framework for creating interactive music in the browser. 
           The visualizations are rendered in real-time using Canvas API.
         </p>
         <div class="flex justify-center gap-4 mt-6">
           <a 
             href="/studio"
-            class="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300 text-sm"
+            class="inline-flex items-center gap-2 px-6 py-3 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-xl transition-all duration-300 text-sm font-medium"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
@@ -122,30 +122,40 @@ const songModules = {
   </main>
 </BaseLayout>
 
-<script define:vars={{ songModules }}>
+<script>
   import * as Tone from 'tone';
+  import * as youAreHoly from '../songs/you-are-holy.js';
+  
+  // Song modules mapping
+  const songModules = {
+    'you-are-holy': youAreHoly
+  };
   
   // Store active songs and their stop functions
   const activeSongs = new Map();
   const analyserNodes = new Map();
 
   // Function to draw waveform
-  function drawWaveform(canvas, analyser) {
+  function drawWaveform(canvas: HTMLCanvasElement, analyser: any) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     const bufferLength = analyser.size;
     
+    // Check if dark mode
+    const isDark = document.documentElement.classList.contains('dark');
+    
     function draw() {
-      if (!analyserNodes.has(canvas.dataset.songId)) return;
+      if (!analyserNodes.has(canvas.dataset.songId!)) return;
       
       requestAnimationFrame(draw);
       const dataArray = analyser.getValue();
       
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+      // Different colors for light/dark mode
+      ctx.fillStyle = isDark ? 'rgba(17, 24, 39, 0.1)' : 'rgba(229, 231, 235, 0.3)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
       ctx.lineWidth = 2;
-      ctx.strokeStyle = '#00d4ff';
+      ctx.strokeStyle = '#3b82f6'; // Blue for both modes
       ctx.beginPath();
       
       const sliceWidth = canvas.width / bufferLength;
@@ -172,7 +182,7 @@ const songModules = {
 
   // Setup canvas dimensions
   document.querySelectorAll('.waveform-canvas').forEach(canvasEl => {
-    const canvas = canvasEl;
+    const canvas = canvasEl as HTMLCanvasElement;
     const container = canvas.parentElement;
     if (container) {
       canvas.width = container.offsetWidth * window.devicePixelRatio;
@@ -185,20 +195,20 @@ const songModules = {
   // Play button handlers
   document.querySelectorAll('.play-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
-      const button = e.currentTarget;
-      const songId = button.dataset.songId;
-      const functionName = button.dataset.songFunction;
+      const button = e.currentTarget as HTMLButtonElement;
+      const songId = button.dataset.songId!;
+      const functionName = button.dataset.songFunction!;
       const card = button.closest('.song-card');
-      const statusEl = card?.querySelector('.status-message span');
-      const stopBtn = card?.querySelector('.stop-btn');
-      const canvas = card?.querySelector('.waveform-canvas');
-      const idleMessage = card?.querySelector('.idle-message');
+      const statusEl = card?.querySelector('.status-message span') as HTMLElement;
+      const stopBtn = card?.querySelector('.stop-btn') as HTMLButtonElement;
+      const canvas = card?.querySelector('.waveform-canvas') as HTMLCanvasElement;
+      const idleMessage = card?.querySelector('.idle-message') as HTMLElement;
       
       // Stop if already playing
       if (activeSongs.has(songId)) {
         if (statusEl) {
           statusEl.textContent = 'Already playing...';
-          statusEl.className = 'text-yellow-400';
+          statusEl.className = 'text-yellow-600 dark:text-yellow-400';
         }
         return;
       }
@@ -207,7 +217,7 @@ const songModules = {
         button.disabled = true;
         if (statusEl) {
           statusEl.textContent = 'Loading...';
-          statusEl.className = 'text-blue-400';
+          statusEl.className = 'text-blue-600 dark:text-blue-400';
         }
         
         // Get the song module from the imported modules
@@ -229,7 +239,7 @@ const songModules = {
         
         if (statusEl) {
           statusEl.textContent = 'Now playing â™«';
-          statusEl.className = 'text-green-400';
+          statusEl.className = 'text-green-600 dark:text-green-400';
         }
         if (stopBtn) stopBtn.disabled = false;
         
@@ -237,7 +247,7 @@ const songModules = {
         console.error('Error playing song:', error);
         if (statusEl) {
           statusEl.textContent = 'Error playing song';
-          statusEl.className = 'text-red-400';
+          statusEl.className = 'text-red-600 dark:text-red-400';
         }
       } finally {
         button.disabled = false;
@@ -248,12 +258,12 @@ const songModules = {
   // Stop button handlers
   document.querySelectorAll('.stop-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const button = e.currentTarget;
-      const songId = button.dataset.songId;
+      const button = e.currentTarget as HTMLButtonElement;
+      const songId = button.dataset.songId!;
       const card = button.closest('.song-card');
-      const statusEl = card?.querySelector('.status-message span');
-      const canvas = card?.querySelector('.waveform-canvas');
-      const idleMessage = card?.querySelector('.idle-message');
+      const statusEl = card?.querySelector('.status-message span') as HTMLElement;
+      const canvas = card?.querySelector('.waveform-canvas') as HTMLCanvasElement;
+      const idleMessage = card?.querySelector('.idle-message') as HTMLElement;
       
       if (activeSongs.has(songId)) {
         const stopFunction = activeSongs.get(songId);
@@ -262,7 +272,7 @@ const songModules = {
         
         // Cleanup analyser
         if (analyserNodes.has(songId)) {
-          analyserNodes.get(songId).dispose();
+          analyserNodes.get(songId)!.dispose();
           analyserNodes.delete(songId);
         }
         
@@ -277,7 +287,7 @@ const songModules = {
         
         if (statusEl) {
           statusEl.textContent = 'Stopped';
-          statusEl.className = 'text-gray-400';
+          statusEl.className = 'text-gray-600 dark:text-gray-400';
         }
         button.disabled = true;
         
