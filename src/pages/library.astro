@@ -1,8 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Footer from '../components/Footer.astro';
+import * as youAreHoly from '../songs/you-are-holy.js';
 
-// Import songs dynamically
+// Song metadata for display
 const songs = [
   {
     id: 'you-are-holy',
@@ -12,6 +13,11 @@ const songs = [
     playFunction: 'playYouAreHoly'
   }
 ];
+
+// Make the song functions available globally
+const songModules = {
+  'you-are-holy': youAreHoly
+};
 ---
 
 <BaseLayout title="Library - Music by Code">
@@ -116,13 +122,15 @@ const songs = [
   </main>
 </BaseLayout>
 
-<script>
+<script define:vars={{ songModules }}>
+  import * as Tone from 'tone';
+  
   // Store active songs and their stop functions
   const activeSongs = new Map();
   const analyserNodes = new Map();
 
   // Function to draw waveform
-  function drawWaveform(canvas: HTMLCanvasElement, analyser: any) {
+  function drawWaveform(canvas, analyser) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     const bufferLength = analyser.size;
@@ -164,7 +172,7 @@ const songs = [
 
   // Setup canvas dimensions
   document.querySelectorAll('.waveform-canvas').forEach(canvasEl => {
-    const canvas = canvasEl as HTMLCanvasElement;
+    const canvas = canvasEl;
     const container = canvas.parentElement;
     if (container) {
       canvas.width = container.offsetWidth * window.devicePixelRatio;
@@ -177,30 +185,33 @@ const songs = [
   // Play button handlers
   document.querySelectorAll('.play-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
-      const button = e.currentTarget as HTMLButtonElement;
+      const button = e.currentTarget;
       const songId = button.dataset.songId;
-      const module = button.dataset.songModule;
       const functionName = button.dataset.songFunction;
       const card = button.closest('.song-card');
       const statusEl = card?.querySelector('.status-message span');
-      const stopBtn = card?.querySelector('.stop-btn') as HTMLButtonElement;
-      const canvas = card?.querySelector('.waveform-canvas') as HTMLCanvasElement;
-      const idleMessage = card?.querySelector('.idle-message') as HTMLElement;
+      const stopBtn = card?.querySelector('.stop-btn');
+      const canvas = card?.querySelector('.waveform-canvas');
+      const idleMessage = card?.querySelector('.idle-message');
       
       // Stop if already playing
       if (activeSongs.has(songId)) {
-        statusEl.textContent = 'Already playing...';
-        statusEl.className = 'text-yellow-400';
+        if (statusEl) {
+          statusEl.textContent = 'Already playing...';
+          statusEl.className = 'text-yellow-400';
+        }
         return;
       }
       
       try {
         button.disabled = true;
-        statusEl.textContent = 'Loading...';
-        statusEl.className = 'text-blue-400';
+        if (statusEl) {
+          statusEl.textContent = 'Loading...';
+          statusEl.className = 'text-blue-400';
+        }
         
-        // Dynamic import
-        const songModule = await import(`../songs/${module}`);
+        // Get the song module from the imported modules
+        const songModule = songModules[songId];
         const playFunction = songModule[functionName];
         
         // Play the song
@@ -208,7 +219,6 @@ const songs = [
         activeSongs.set(songId, stopFunction);
         
         // Setup analyser for waveform
-        const Tone = await import('tone');
         const analyser = new Tone.Waveform(256);
         Tone.getDestination().connect(analyser);
         analyserNodes.set(songId, analyser);
@@ -217,14 +227,18 @@ const songs = [
         if (idleMessage) idleMessage.style.display = 'none';
         drawWaveform(canvas, analyser);
         
-        statusEl.textContent = 'Now playing ♫';
-        statusEl.className = 'text-green-400';
-        stopBtn.disabled = false;
+        if (statusEl) {
+          statusEl.textContent = 'Now playing ♫';
+          statusEl.className = 'text-green-400';
+        }
+        if (stopBtn) stopBtn.disabled = false;
         
       } catch (error) {
         console.error('Error playing song:', error);
-        statusEl.textContent = 'Error playing song';
-        statusEl.className = 'text-red-400';
+        if (statusEl) {
+          statusEl.textContent = 'Error playing song';
+          statusEl.className = 'text-red-400';
+        }
       } finally {
         button.disabled = false;
       }
@@ -234,12 +248,12 @@ const songs = [
   // Stop button handlers
   document.querySelectorAll('.stop-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const button = e.currentTarget as HTMLButtonElement;
+      const button = e.currentTarget;
       const songId = button.dataset.songId;
       const card = button.closest('.song-card');
       const statusEl = card?.querySelector('.status-message span');
-      const canvas = card?.querySelector('.waveform-canvas') as HTMLCanvasElement;
-      const idleMessage = card?.querySelector('.idle-message') as HTMLElement;
+      const canvas = card?.querySelector('.waveform-canvas');
+      const idleMessage = card?.querySelector('.idle-message');
       
       if (activeSongs.has(songId)) {
         const stopFunction = activeSongs.get(songId);
@@ -253,18 +267,22 @@ const songs = [
         }
         
         // Clear canvas
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const ctx = canvas?.getContext('2d');
+        if (ctx && canvas) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
         
         // Show idle message
         if (idleMessage) idleMessage.style.display = 'flex';
         
-        statusEl.textContent = 'Stopped';
-        statusEl.className = 'text-gray-400';
+        if (statusEl) {
+          statusEl.textContent = 'Stopped';
+          statusEl.className = 'text-gray-400';
+        }
         button.disabled = true;
         
         setTimeout(() => {
-          statusEl.textContent = '';
+          if (statusEl) statusEl.textContent = '';
         }, 2000);
       }
     });
