@@ -178,14 +178,13 @@ import Footer from '../components/Footer.astro';
     if (!analyser || !isRunning) return;
     
     const ctx = canvas.getContext('2d')!;
-    const bufferLength = analyser.fftSize;
-    const dataArray = new Float32Array(bufferLength);
+    const bufferLength = analyser.size;
     
     function draw() {
       if (!isRunning) return;
       
       animationId = requestAnimationFrame(draw);
-      analyser!.getValue(dataArray);
+      const dataArray = analyser!.getValue();
       
       ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -235,7 +234,7 @@ import Footer from '../components/Footer.astro';
       // Setup analyser
       if (!analyser) {
         analyser = new Tone.Waveform(256);
-        Tone.Destination.connect(analyser);
+        Tone.getDestination().connect(analyser);
       }
       
       // Execute user code
@@ -259,8 +258,8 @@ import Footer from '../components/Footer.astro';
 
   // Stop audio
   stopBtn.addEventListener('click', () => {
-    Tone.Transport.stop();
-    Tone.Transport.cancel();
+    Tone.getTransport().stop();
+    Tone.getTransport().cancel();
     isRunning = false;
     
     if (animationId) {

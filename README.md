@@ -1,6 +1,6 @@
 # 🎵 Music by Code
 
-**Made by Promise**
+## Made by Promise
 
 A beautiful, interactive Astro website that showcases music created entirely with code using Tone.js.
 
@@ -37,7 +37,7 @@ npm run preview
 
 ## 🎼 Project Structure
 
-```
+```md
 music-by-code/
 ├── src/
 │   ├── pages/
@@ -90,14 +90,16 @@ Then add the song to the library page in `src/pages/library.astro`.
 ### GitHub Pages
 
 1. Update `astro.config.mjs` with your repository name:
+
 ```javascript
 export default defineConfig({
-  site: 'https://yourusername.github.io',
-  base: '/your-repo-name',
+  site: 'https://nwhator.github.io',
+  base: '/Music-by-Code',
 });
 ```
 
 2. Create `.github/workflows/deploy.yml`:
+
 ```yaml
 name: Deploy to GitHub Pages
 

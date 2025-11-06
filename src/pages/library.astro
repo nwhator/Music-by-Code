@@ -5,25 +5,11 @@ import Footer from '../components/Footer.astro';
 // Import songs dynamically
 const songs = [
   {
-    id: 'lofi-beats',
-    title: 'Lofi Beats',
-    description: 'Chill lofi beats with atmospheric pads',
-    module: 'lofi-beats.js',
-    playFunction: 'playLofi'
-  },
-  {
-    id: 'ambient-dream',
-    title: 'Ambient Dream',
-    description: 'Ethereal ambient soundscape',
-    module: 'ambient-dream.js',
-    playFunction: 'playAmbient'
-  },
-  {
-    id: 'digital-pulse',
-    title: 'Digital Pulse',
-    description: 'Energetic electronic rhythm',
-    module: 'digital-pulse.js',
-    playFunction: 'playDigital'
+    id: 'you-are-holy',
+    title: 'You Are Holy',
+    description: 'Christian worship anthem with dynamic arrangements',
+    module: 'you-are-holy.js',
+    playFunction: 'playYouAreHoly'
   }
 ];
 ---
@@ -136,16 +122,16 @@ const songs = [
   const analyserNodes = new Map();
 
   // Function to draw waveform
-  function drawWaveform(canvas, analyser) {
+  function drawWaveform(canvas: HTMLCanvasElement, analyser: any) {
     const ctx = canvas.getContext('2d');
-    const bufferLength = analyser.fftSize;
-    const dataArray = new Float32Array(bufferLength);
+    if (!ctx) return;
+    const bufferLength = analyser.size;
     
     function draw() {
       if (!analyserNodes.has(canvas.dataset.songId)) return;
       
       requestAnimationFrame(draw);
-      analyser.getValue(dataArray);
+      const dataArray = analyser.getValue();
       
       ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -177,26 +163,29 @@ const songs = [
   }
 
   // Setup canvas dimensions
-  document.querySelectorAll('.waveform-canvas').forEach(canvas => {
+  document.querySelectorAll('.waveform-canvas').forEach(canvasEl => {
+    const canvas = canvasEl as HTMLCanvasElement;
     const container = canvas.parentElement;
-    canvas.width = container.offsetWidth * window.devicePixelRatio;
-    canvas.height = container.offsetHeight * window.devicePixelRatio;
-    canvas.style.width = '100%';
-    canvas.style.height = '100%';
+    if (container) {
+      canvas.width = container.offsetWidth * window.devicePixelRatio;
+      canvas.height = container.offsetHeight * window.devicePixelRatio;
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
+    }
   });
 
   // Play button handlers
   document.querySelectorAll('.play-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
-      const button = e.currentTarget;
+      const button = e.currentTarget as HTMLButtonElement;
       const songId = button.dataset.songId;
       const module = button.dataset.songModule;
       const functionName = button.dataset.songFunction;
       const card = button.closest('.song-card');
-      const statusEl = card.querySelector('.status-message span');
-      const stopBtn = card.querySelector('.stop-btn');
-      const canvas = card.querySelector('.waveform-canvas');
-      const idleMessage = card.querySelector('.idle-message');
+      const statusEl = card?.querySelector('.status-message span');
+      const stopBtn = card?.querySelector('.stop-btn') as HTMLButtonElement;
+      const canvas = card?.querySelector('.waveform-canvas') as HTMLCanvasElement;
+      const idleMessage = card?.querySelector('.idle-message') as HTMLElement;
       
       // Stop if already playing
       if (activeSongs.has(songId)) {
@@ -219,9 +208,9 @@ const songs = [
         activeSongs.set(songId, stopFunction);
         
         // Setup analyser for waveform
-        const { Tone } = await import('tone');
+        const Tone = await import('tone');
         const analyser = new Tone.Waveform(256);
-        Tone.Destination.connect(analyser);
+        Tone.getDestination().connect(analyser);
         analyserNodes.set(songId, analyser);
         
         // Hide idle message and start visualization
@@ -245,12 +234,12 @@ const songs = [
   // Stop button handlers
   document.querySelectorAll('.stop-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const button = e.currentTarget;
+      const button = e.currentTarget as HTMLButtonElement;
       const songId = button.dataset.songId;
       const card = button.closest('.song-card');
-      const statusEl = card.querySelector('.status-message span');
-      const canvas = card.querySelector('.waveform-canvas');
-      const idleMessage = card.querySelector('.idle-message');
+      const statusEl = card?.querySelector('.status-message span');
+      const canvas = card?.querySelector('.waveform-canvas') as HTMLCanvasElement;
+      const idleMessage = card?.querySelector('.idle-message') as HTMLElement;
       
       if (activeSongs.has(songId)) {
         const stopFunction = activeSongs.get(songId);

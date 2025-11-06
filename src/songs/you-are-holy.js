@@ -310,7 +310,7 @@ async function playSong() {
   instruments = createInstruments();
   
   // Set tempo
-  Tone.Transport.bpm.value = 75;
+  Tone.getTransport().bpm.value = 75;
   
   const beatDuration = 60 / 75; // 0.8 seconds per beat
   const barDuration = beatDuration * 4; // 3.2 seconds per bar
@@ -427,7 +427,7 @@ function stopSong() {
   console.log("⏹️ Stopping song...");
   
   // Cancel all scheduled events
-  Tone.Transport.cancel();
+  Tone.getTransport().cancel();
   
   // Release all notes
   if (instruments) {
