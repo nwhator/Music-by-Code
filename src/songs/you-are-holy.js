@@ -230,9 +230,15 @@ function playChordProgression(instrument, chordProgression, startTime, duration,
   chordProgression.forEach((chord, index) => {
     const time = startTime + index * duration;
     const notes = chordNotes[chord];
-    if (notes) {
-      const id = instrument.triggerAttackRelease(notes, duration * 0.9, time);
-      scheduledEvents.push({ instrument, time, id });
+    if (notes && Array.isArray(notes)) {
+      // Schedule each note in the chord
+      notes.forEach(note => {
+        try {
+          instrument.triggerAttackRelease(note, duration * 0.9, time);
+        } catch (e) {
+          console.error('Error playing note:', note, e);
+        }
+      });
     }
   });
 }
@@ -414,10 +420,8 @@ async function playSong() {
 
   console.log("✨ Song complete! Total duration: ~" + Math.round(currentTime - Tone.now()) + " seconds");
   
-  // Auto-stop after song ends
-  setTimeout(() => {
-    stopSong();
-  }, (currentTime - Tone.now() + 1) * 1000);
+  // Return stop function
+  return stopSong;
 }
 
 // Stop function
@@ -429,18 +433,25 @@ function stopSong() {
   // Cancel all scheduled events
   Tone.getTransport().cancel();
   
-  // Release all notes
+  // Release all notes and dispose instruments
   if (instruments) {
     Object.values(instruments).forEach(instrument => {
-      if (instrument.releaseAll) {
-        instrument.releaseAll();
+      try {
+        if (instrument.releaseAll) {
+          instrument.releaseAll();
+        }
+        if (instrument.dispose) {
+          instrument.dispose();
+        }
+      } catch (e) {
+        // Ignore disposal errors
       }
     });
   }
   
   // Clear scheduled events
   scheduledEvents = [];
-  
+  instruments = null;
   isPlaying = false;
 }
 
