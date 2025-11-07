@@ -82,7 +82,7 @@ function createInstruments() {
     resonance: 4000,
     octaves: 1.5
   }).toDestination();
-  hihat.volume.value = -20;
+  hihat.volume.value = -25; // Reduced hi-hat volume for cleaner sound
 
   // 2. Piano (for chords)
   const piano = new Tone.PolySynth(Tone.Synth, {
@@ -156,7 +156,7 @@ function playChords(instrument, progression, startTime, barDuration) {
     if (notes) {
       // Play each note of the chord with tiny offset to avoid timing conflicts
       notes.forEach((note, noteIndex) => {
-        instrument.triggerAttackRelease(note, barDuration * 0.9, time + noteIndex * 0.001);
+        instrument.triggerAttackRelease(note, barDuration * 0.9, time + noteIndex * 0.002);
       });
     }
   });
@@ -181,6 +181,10 @@ async function playSong() {
   if (isPlaying) return;
 
   await Tone.start();
+  
+  // Set lookahead for smoother scheduling (helps with mobile)
+  Tone.context.lookAhead = 0.1;
+  
   isPlaying = true;
 
   // Create instruments
