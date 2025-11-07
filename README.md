@@ -91,14 +91,16 @@ Then add the song to the library page in `src/pages/library.astro`.
 
 This project is optimized for [Vercel](https://vercel.com) deployment:
 
-**Option 1: Deploy via Vercel Dashboard**
+#### Option 1: Deploy via Vercel Dashboard
+
 1. Push your code to GitHub
 2. Go to [vercel.com](https://vercel.com) and sign in
 3. Click "New Project" and import your `Music-by-Code` repository
 4. Vercel will auto-detect Astro and configure the build settings
 5. Click "Deploy" and your site will be live!
 
-**Option 2: Deploy via CLI**
+#### Option 2: Deploy via CLI
+
 ```bash
 # Install Vercel CLI globally
 npm i -g vercel
