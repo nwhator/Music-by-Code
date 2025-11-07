@@ -94,7 +94,7 @@ function createInstruments() {
       release: 1.2
     }
   }).toDestination();
-  piano.volume.value = -12;
+  piano.volume.value = -6;
 
   // 3. Pad (atmospheric background)
   const pad = new Tone.PolySynth(Tone.Synth, {
@@ -106,7 +106,7 @@ function createInstruments() {
       release: 2
     }
   }).toDestination();
-  pad.volume.value = -18;
+  pad.volume.value = -12;
 
   // 4. Lead synth for melody
   const lead = new Tone.Synth({
@@ -118,7 +118,7 @@ function createInstruments() {
       release: 0.5
     }
   }).toDestination();
-  lead.volume.value = -8;
+  lead.volume.value = -14;
 
   return { kick, snare, hihat, piano, pad, lead };
 }
@@ -193,21 +193,22 @@ async function playSong() {
   console.log("🎵 Starting You Are Holy...");
 
   // DRUMS INTRO (4 bars) - Drums only
-  console.log("��� Drums intro...");
+  console.log(" Drums intro...");
   playDrums(instruments, currentTime, 4);
   currentTime += barDuration * 4;
 
   // INTRO (4 bars) - Drums + Piano
-  console.log("��� Intro with chords...");
+  console.log(" Intro with chords...");
   playDrums(instruments, currentTime, 4);
   playChords(instruments.piano, sections.intro, currentTime, barDuration);
   currentTime += barDuration * 4;
 
-  // VERSE 1 (8 bars) - Drums + Piano + Pad
-  console.log("��� Verse 1...");
+  // VERSE 1 (8 bars) - Drums + Piano + Pad + Melody
+  console.log("🎤 Verse 1...");
   playDrums(instruments, currentTime, 8);
   playChords(instruments.piano, sections.verse, currentTime, barDuration);
   playChords(instruments.pad, sections.verse, currentTime, barDuration);
+  playMelody(instruments.lead, sections.verse, currentTime, barDuration);
   currentTime += barDuration * 8;
 
   // CHORUS 1 (8 bars) - All instruments + Melody
@@ -219,10 +220,11 @@ async function playSong() {
   currentTime += barDuration * 8;
 
   // VERSE 2 (8 bars)
-  console.log("��� Verse 2...");
+  console.log("🎤 Verse 2...");
   playDrums(instruments, currentTime, 8);
   playChords(instruments.piano, sections.verse, currentTime, barDuration);
   playChords(instruments.pad, sections.verse, currentTime, barDuration);
+  playMelody(instruments.lead, sections.verse, currentTime, barDuration);
   currentTime += barDuration * 8;
 
   // CHORUS 2 (8 bars)
@@ -234,10 +236,11 @@ async function playSong() {
   currentTime += barDuration * 8;
 
   // VERSE 3 (8 bars)
-  console.log("��� Verse 3...");
+  console.log("🎤 Verse 3...");
   playDrums(instruments, currentTime, 8);
   playChords(instruments.piano, sections.verse, currentTime, barDuration);
   playChords(instruments.pad, sections.verse, currentTime, barDuration);
+  playMelody(instruments.lead, sections.verse, currentTime, barDuration);
   currentTime += barDuration * 8;
 
   // CHORUS 3 (8 bars)
@@ -249,10 +252,11 @@ async function playSong() {
   currentTime += barDuration * 8;
 
   // BRIDGE (7 bars)
-  console.log("��� Bridge...");
+  console.log("🌉 Bridge...");
   playDrums(instruments, currentTime, 7);
   playChords(instruments.piano, sections.bridge, currentTime, barDuration);
   playChords(instruments.pad, sections.bridge, currentTime, barDuration);
+  playMelody(instruments.lead, sections.bridge, currentTime, barDuration);
   currentTime += barDuration * 7;
 
   // FINAL CHORUS (8 bars)
