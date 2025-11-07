@@ -154,9 +154,9 @@ function playChords(instrument, progression, startTime, barDuration) {
     const notes = chordNotes[chord];
     
     if (notes) {
-      // Play each note of the chord
-      notes.forEach(note => {
-        instrument.triggerAttackRelease(note, barDuration * 0.9, time);
+      // Play each note of the chord with tiny offset to avoid timing conflicts
+      notes.forEach((note, noteIndex) => {
+        instrument.triggerAttackRelease(note, barDuration * 0.9, time + noteIndex * 0.001);
       });
     }
   });
@@ -170,7 +170,7 @@ function playMelody(lead, progression, startTime, barDuration) {
       const noteTime = barDuration / melody.length;
       melody.forEach((note, noteIndex) => {
         const time = startTime + chordIndex * barDuration + noteIndex * noteTime;
-        lead.triggerAttackRelease(note, noteTime * 0.8, time);
+        lead.triggerAttackRelease(note, noteTime * 0.8, time + 0.001);
       });
     }
   });
@@ -188,9 +188,9 @@ async function playSong() {
 
   const beatDuration = 60 / 100; // 0.6s per beat
   const barDuration = beatDuration * 4; // 2.4s per bar
-  let currentTime = Tone.now() + 0.5; // Small delay to start
+  let currentTime = Tone.now() + 1; // 1 second delay to ensure audio context is ready
 
-  console.log("��� Starting You Are Holy...");
+  console.log("🎵 Starting You Are Holy...");
 
   // DRUMS INTRO (4 bars) - Drums only
   console.log("��� Drums intro...");
