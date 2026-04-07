@@ -5,6 +5,7 @@ interface Props {
 }
 
 const { title, description = "Exploring the harmony between code and sound." } = Astro.props;
+const realtimeeToken = import.meta.env.PUBLIC_REALTIMEE_TOKEN as string | undefined;
 ---
 
 <!doctype html>
@@ -36,6 +37,15 @@ const { title, description = "Exploring the harmony between code and sound." } =
     </button>
 
     <slot />
+
+    <!-- RealTimee chat widget -->
+    {realtimeeToken && (
+      <script
+        async
+        src="https://real-timee.vercel.app/widget.js"
+        data-site-token={realtimeeToken}
+      ></script>
+    )}
 
     <script is:inline>
       // Theme toggle functionality
